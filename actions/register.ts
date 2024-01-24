@@ -2,6 +2,9 @@
 
 import * as z from "zod"
 import { RegisterSchema } from "../schemas";
+import bcrypt from "bcrypt";
+import { db } from "@/lib/db";
+import { getUserbyEmail } from "../data/user";
 
 
 
@@ -12,5 +15,26 @@ export const register = async (values: z.infer<typeof RegisterSchema>) =>{
         return {error: "Informações inválidas"}
     }
 
-    return {sucess: "Cadastro Completo"}
+    const {email, password, name} = validatedFields.data;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const existingUser = await getUserbyEmail(email);
+
+
+
+    if(existingUser){
+        return{error: "Email ou Nome já em uso"}
+    }
+
+    await db.user.create({
+        data: {
+            name, 
+            email,
+            password: hashedPassword,
+            
+        },
+    });
+
+    return {sucess: "Usuário criado"}
 };

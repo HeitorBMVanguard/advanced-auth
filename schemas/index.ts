@@ -19,7 +19,7 @@ export const RegisterSchema = z.object({
         message:"Senha é obrigatória, minimo 6 caracteres",
     }), // minimo de 1 caracter na senha
 
-   name: z.string().min(1, {
+    name: z.string().min(1, {
         message:"Nome é obrigatório",
     }),
 });
