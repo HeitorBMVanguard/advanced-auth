@@ -29,7 +29,7 @@ export default function Home() {
 
       <div>
         <LoginButton>
-        <Button size="lg">
+        <Button size="lg" variant="outline">
           Entrar
         </Button>
 

@@ -2,6 +2,10 @@
 
 import * as z from "zod"
 import { LoginSchema } from "../schemas";
+import { signIn } from "../auth";
+import { DEFAULT_LOGIN_REDIRECT } from "../routes";
+
+import {AuthError} from "next-auth";
 
 
 
@@ -12,5 +16,26 @@ export const login = async (values: z.infer<typeof LoginSchema>) =>{
         return {error: "Informações inválidas"}
     }
 
-    return {sucess: "Email enviado"}
+    const {email, password} = validatedFields.data;
+
+    try{
+        await signIn("crednetials", {
+            email,
+            password,
+            redirectTo: DEFAULT_LOGIN_REDIRECT,
+        })
+    } catch (error){
+        if (error instanceof AuthError){
+            switch(error.type){
+                case "CredentialsSignIn":
+                    return { error: "Credenciais Inválidas!"}
+                default:
+                    return {error: "Algo deu errado!"}
+            }
+        }
+
+        throw error;
+    }
+
+  
 };
